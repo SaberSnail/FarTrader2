@@ -17,32 +17,28 @@ namespace FarTrader.DataModels
 		[NotNull]
 		public static SystemData CreateHomeworld([NotNull] HexPoint hexPoint, [NotNull] Random rng)
 		{
-			string name = ImperialNameGenerator.Default.GetName(rng);
 			PhysicalSystemData physicalData = RandomSystemDataUtility.CreateHomeworldPhysicalSystemData(rng);
-			long population = RandomSystemDataUtility.GetPopulation(rng);
-			bool isInterdicted = false;
-			double capitolScore = SystemDataUtility.GetCapitolScore(population, isInterdicted) + 100;
+			SocialSystemData socialData = RandomSystemDataUtility.CreateHomeworldSocialSystemData(physicalData, rng);
 
-			return new SystemData(hexPoint, name, physicalData, population, isInterdicted, AdministrativeRole.None, capitolScore);
+			return new SystemData(hexPoint, physicalData, socialData);
 		}
 
 		[NotNull]
 		public static SystemData CreateRandom([NotNull] HexPoint hexPoint, [NotNull] Random rng)
 		{
-			string name = ImperialNameGenerator.Default.GetName(rng);
 			PhysicalSystemData physicalData = RandomSystemDataUtility.CreatePhysicalSystemData(rng);
-			long population = RandomSystemDataUtility.GetPopulation(rng);
-			bool isInterdicted = RandomSystemDataUtility.GetIsInterdicted(rng);
-			double capitolScore = SystemDataUtility.GetCapitolScore(population, isInterdicted);
+			SocialSystemData socialData = RandomSystemDataUtility.CreateSocialSystemData(physicalData, rng);
 
-			return new SystemData(hexPoint, name, physicalData, population, isInterdicted, AdministrativeRole.None, capitolScore);
+			return new SystemData(hexPoint, physicalData, socialData);
 		}
 
 		[NotNull]
-		public SystemData CreateWithPoliticalRole(AdministrativeRole role)
+		public SystemData CloneWithAdministrativeRole(AdministrativeRole role)
 		{
 			VerifyNotEmpty();
-			return new SystemData(m_location, m_name, m_physicalData, m_population, m_isInterdicted, role, m_capitolScore);
+			SocialSystemData socialData = m_socialData.Clone();
+			socialData.AdministrativeRole = role;
+			return new SystemData(m_location, m_physicalData.Clone(), socialData);
 		}
 
 		public bool IsEmpty
@@ -62,7 +58,7 @@ namespace FarTrader.DataModels
 			get
 			{
 				VerifyNotEmpty();
-				return m_name;
+				return m_socialData.Name;
 			}
 		}
 
@@ -89,7 +85,7 @@ namespace FarTrader.DataModels
 			get
 			{
 				VerifyNotEmpty();
-				return m_population;
+				return m_socialData.Population;
 			}
 		}
 
@@ -98,7 +94,7 @@ namespace FarTrader.DataModels
 			get
 			{
 				VerifyNotEmpty();
-				return m_isInterdicted;
+				return m_socialData.IsInterdicted;
 			}
 		}
 
@@ -107,7 +103,7 @@ namespace FarTrader.DataModels
 			get
 			{
 				VerifyNotEmpty();
-				return m_administrativeRole;
+				return m_socialData.AdministrativeRole;
 			}
 		}
 
@@ -116,7 +112,7 @@ namespace FarTrader.DataModels
 			get
 			{
 				VerifyNotEmpty();
-				return m_capitolScore;
+				return m_socialData.CapitolScore;
 			}
 		}
 
@@ -133,15 +129,11 @@ namespace FarTrader.DataModels
 			m_location = hexPoint;
 		}
 
-		private SystemData(HexPoint hexPoint, string name, PhysicalSystemData physicalData, long population, bool isInterdicted, AdministrativeRole administrativeRole, double capitolScore)
+		private SystemData(HexPoint hexPoint, PhysicalSystemData physicalData, SocialSystemData socialData)
 		{
 			m_location = hexPoint;
-			m_name = name;
 			m_physicalData = physicalData;
-			m_population = population;
-			m_isInterdicted = isInterdicted;
-			m_administrativeRole = administrativeRole;
-			m_capitolScore = capitolScore;
+			m_socialData = socialData;
 		}
 
 		[Conditional("DEBUG")]
@@ -153,24 +145,7 @@ namespace FarTrader.DataModels
 
 		readonly bool m_isEmpty;
 		readonly HexPoint m_location;
-		readonly string m_name;
 		readonly PhysicalSystemData m_physicalData;
-		readonly long m_population;
-		readonly bool m_isInterdicted;
-		readonly double m_capitolScore;
-		readonly AdministrativeRole m_administrativeRole;
-	}
-
-	internal sealed class SocialSystemData
-	{
-		public string Name { get; set; }
-
-		public long Population { get; set; }
-
-		public bool IsInterdicted { get; set; }
-
-		public double CapitolScore { get; set; }
-
-		public AdministrativeRole AdministrativeRole { get; set; }
+		readonly SocialSystemData m_socialData;
 	}
 }

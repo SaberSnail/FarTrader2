@@ -63,6 +63,7 @@
     <Compile Include="DataModels\RandomSystemDataUtility.cs" />
     <Compile Include="DataModels\ResourceAvailability.cs" />
     <Compile Include="DataModels\ResourceKind.cs" />
+    <Compile Include="DataModels\SocialSystemData.cs" />
     <Compile Include="DataModels\SystemDataUtility.cs" />
     <Compile Include="DataModels\TechnologyKind.cs" />
     <Compile Include="DataModels\TechnologyKindData.cs" />

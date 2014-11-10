@@ -1,13 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using FarTrader.Hex;
+using Logos.Utility;
 
 namespace FarTrader.DataModels
 {
 	internal sealed class PhysicalSystemData
 	{
-		// System attributes
+		public PhysicalSystemData()
+		{
+		}
+
+		public PhysicalSystemData(PhysicalSystemData that)
+		{
+			m_density = that.m_density;
+			m_gravity = that.m_gravity;
+			m_hasAsteroidBelts = that.m_hasAsteroidBelts;
+			m_hasGasGiants = that.m_hasGasGiants;
+			m_location = that.m_location;
+			m_oceanCoverage = that.m_oceanCoverage;
+			m_radius = that.m_radius;
+			m_planetaryResourceAvailability = that.m_planetaryResourceAvailability.EmptyIfNull().ToDictionary(x => x.Key, x => x.Value);
+			m_systemResourceAvailability = that.m_systemResourceAvailability.EmptyIfNull().ToDictionary(x => x.Key, x => x.Value);
+		}
+
 		public HexPoint Location
 		{
 			get
@@ -124,6 +142,11 @@ namespace FarTrader.DataModels
 			{
 				m_planetaryResourceAvailability = value;
 			}
+		}
+
+		public PhysicalSystemData Clone()
+		{
+			return new PhysicalSystemData(this);
 		}
 
 		[Conditional("DEBUG")]

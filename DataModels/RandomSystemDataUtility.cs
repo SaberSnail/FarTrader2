@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FarTrader.Tools;
 
 namespace FarTrader.DataModels
 {
 	internal static class RandomSystemDataUtility
 	{
-		public static long GetPopulation(Random rng)
-		{
-			return (long) (rng.NextDouble() * 10000000000);
-		}
-
-		public static bool GetIsInterdicted(Random rng)
-		{
-			return rng.NextDouble() < 0.05;
-		}
-
 		public static PhysicalSystemData CreateHomeworldPhysicalSystemData(Random rng)
 		{
 			PhysicalSystemData data = new PhysicalSystemData();
@@ -52,6 +43,32 @@ namespace FarTrader.DataModels
 			SetPlanetaryResourceAvailability(data, rng);
 
 			return data;
+		}
+
+		public static SocialSystemData CreateHomeworldSocialSystemData(PhysicalSystemData physicalData, Random rng)
+		{
+			SocialSystemData socialData = new SocialSystemData();
+
+			socialData.Name = ImperialNameGenerator.Default.GetName(rng);
+			socialData.AdministrativeRole = AdministrativeRole.None;
+			SetPopulation(socialData, rng);
+			socialData.IsInterdicted = false;
+			socialData.CapitolScore = SystemDataUtility.GetCapitolScore(physicalData, socialData) + 100;
+
+			return socialData;
+		}
+
+		public static SocialSystemData CreateSocialSystemData(PhysicalSystemData physicalData, Random rng)
+		{
+			SocialSystemData socialData = new SocialSystemData();
+
+			socialData.Name = ImperialNameGenerator.Default.GetName(rng);
+			socialData.AdministrativeRole = AdministrativeRole.None;
+			SetPopulation(socialData, rng);
+			SetIsInterdicted(socialData, rng);
+			socialData.CapitolScore = SystemDataUtility.GetCapitolScore(physicalData, socialData);
+
+			return socialData;
 		}
 
 		private static void SetHasGasGiants(PhysicalSystemData data, Random rng)
@@ -253,6 +270,16 @@ namespace FarTrader.DataModels
 				CreateSoilSystemAvailability(rng),
 				CreateBiologicalSystemAvailability(rng),
 			}.ToDictionary(x => x.ResourceKind);
+		}
+
+		private static void SetPopulation(SocialSystemData data, Random rng)
+		{
+			data.Population = (long) (rng.NextDouble() * 10000000000);
+		}
+
+		private static void SetIsInterdicted(SocialSystemData data, Random rng)
+		{
+			data.IsInterdicted = rng.NextDouble() < 0.05;
 		}
 	}
 }

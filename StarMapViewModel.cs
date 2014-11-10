@@ -180,14 +180,14 @@ namespace FarTrader
 					sectorData.Add(point, SystemData.CreateEmpty(point));
 			}
 
-			sectorData[center] = sectorData[center].CreateWithPoliticalRole(AdministrativeRole.Capitol);
+			sectorData[center] = sectorData[center].CloneWithAdministrativeRole(AdministrativeRole.Capitol);
 
 			List<SystemData> capitolCandidates = sectorData.Values.Where(x => !x.IsEmpty && x.Location != center && center.GetDistanceTo(x.Location) > 4).OrderByDescending(x => x.CapitolScore).ToList();
 			foreach (HexDirection direction in Enum.GetValues(typeof(HexDirection)))
 			{
 				SystemData data = capitolCandidates.FirstOrDefault(x => center.GetDirectionTo(x.Location) == direction);
 				if (data != null)
-					sectorData[data.Location] = data.CreateWithPoliticalRole(AdministrativeRole.RegionalCapitol);
+					sectorData[data.Location] = data.CloneWithAdministrativeRole(AdministrativeRole.RegionalCapitol);
 			}
 
 			return sectorData;
