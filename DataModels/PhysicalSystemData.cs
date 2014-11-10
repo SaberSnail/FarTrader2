@@ -22,8 +22,8 @@ namespace FarTrader.DataModels
 			m_location = that.m_location;
 			m_oceanCoverage = that.m_oceanCoverage;
 			m_radius = that.m_radius;
-			m_planetaryResourceAvailability = that.m_planetaryResourceAvailability.EmptyIfNull().ToDictionary(x => x.Key, x => x.Value);
-			m_systemResourceAvailability = that.m_systemResourceAvailability.EmptyIfNull().ToDictionary(x => x.Key, x => x.Value);
+			m_planetaryResourceAvailability = that.m_planetaryResourceAvailability == null ? null : that.m_planetaryResourceAvailability.ToDictionary(x => x.Key, x => x.Value);
+			m_systemResourceAvailability = that.m_systemResourceAvailability == null ? null : that.m_systemResourceAvailability.ToDictionary(x => x.Key, x => x.Value);
 		}
 
 		public HexPoint Location
